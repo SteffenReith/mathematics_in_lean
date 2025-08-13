@@ -5,16 +5,45 @@ open Set Filter Topology
 
 def principal {α : Type*} (s : Set α) : Filter α
     where
-  sets := { t | s ⊆ t }
-  univ_sets := sorry
-  sets_of_superset := sorry
-  inter_sets := sorry
+      sets := { t | s ⊆ t }
+
+      univ_sets := by
+        exact subset_univ s
+
+      sets_of_superset := by
+        intro _ _ hx hsub
+        exact subset_trans hx hsub
+
+      inter_sets := by
+        intro _ _ hx hy
+        exact subset_inter hx hy
 
 example : Filter ℕ :=
-  { sets := { s | ∃ a, ∀ b, a ≤ b → b ∈ s }
-    univ_sets := sorry
-    sets_of_superset := sorry
-    inter_sets := sorry }
+  {
+    sets := { s | ∃ a, ∀ b, a ≤ b → b ∈ s }
+
+    univ_sets := by
+      use 0
+      intro b _
+      exact mem_univ b
+
+    sets_of_superset := by
+      intro _ _ hx hsub
+      obtain ⟨l, hl⟩ := hx
+      use l
+      intro b h
+      exact hsub <| hl b h
+
+    inter_sets := by
+      intro _ _ hx hy
+      obtain ⟨l, hl⟩:= hx
+      obtain ⟨k, hk⟩ := hy
+      use max l k
+      intro b h
+      rw [max_le_iff] at h
+      exact ⟨hl b <| h.1, hk b <| h.2⟩
+
+  }
 
 def Tendsto₁ {X Y : Type*} (f : X → Y) (F : Filter X) (G : Filter Y) :=
   ∀ V ∈ G, f ⁻¹' V ∈ F
@@ -102,4 +131,3 @@ example (P Q R : ℕ → Prop) (hP : ∀ᶠ n in atTop, P n) (hQ : ∀ᶠ n in a
 example (u : ℕ → ℝ) (M : Set ℝ) (x : ℝ) (hux : Tendsto u atTop (𝓝 x))
     (huM : ∀ᶠ n in atTop, u n ∈ M) : x ∈ closure M :=
   sorry
-
