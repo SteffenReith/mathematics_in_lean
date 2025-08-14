@@ -55,6 +55,11 @@ example {X Y : Type*} (f : X → Y) (F : Filter X) (G : Filter Y) :
     Tendsto₂ f F G ↔ Tendsto₁ f F G :=
   Iff.rfl
 
+-- Same proof using tactics mode
+example {X Y : Type*} (f : X → Y) (F : Filter X) (G : Filter Y) :
+    Tendsto₂ f F G ↔ Tendsto₁ f F G := by
+  rfl
+
 #check (@Filter.map_mono : ∀ {α β} {m : α → β}, Monotone (map m))
 
 #check
